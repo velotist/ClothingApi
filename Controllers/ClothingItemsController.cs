@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClothingApi.Infrastructure;
 using ClothingApi.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,8 @@ namespace ClothingApi.Controllers
 
         [AuthorizeEnum(Roles.View)]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClothingItemDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<ClothingItemDto>>> GetClothingItems()
         {
             return await _context.ClothingItems.ToListAsync();
@@ -29,6 +32,8 @@ namespace ClothingApi.Controllers
 
         [AuthorizeEnum(Roles.View)]
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClothingItemDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ClothingItemDto>> GetClothingItem(Guid id)
         {
             var clothingItem = await _context.ClothingItems.FindAsync(id);
@@ -43,6 +48,7 @@ namespace ClothingApi.Controllers
 
         [AuthorizeEnum(Roles.Editor)]
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClothingItemDto))]
         public async Task<IActionResult> PutClothingItem(Guid id, ClothingItemDto clothingItem)
         {
             if (id != clothingItem.Id)
@@ -73,6 +79,7 @@ namespace ClothingApi.Controllers
 
         [AuthorizeEnum(Roles.Editor)]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClothingItemDto))]
         public async Task PostClothingItem(List<ClothingItemDto> clothingItems)
         {
             if(clothingItems.Count == 0)
@@ -90,6 +97,8 @@ namespace ClothingApi.Controllers
 
         [AuthorizeEnum(Roles.Manager)]
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteClothingItem(Guid id)
         {
             ClothingItemDto clothingItem = await _context.ClothingItems.FindAsync(id);
