@@ -1,10 +1,11 @@
-﻿using ClothingApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClothingApi.Infrastructure;
+using ClothingApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClothingApi.Controllers
 {
@@ -19,12 +20,14 @@ namespace ClothingApi.Controllers
             _context = context;
         }
 
+        [AuthorizeEnum(Roles.View)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClothingItemDto>>> GetClothingItems()
         {
             return await _context.ClothingItems.ToListAsync();
         }
 
+        [AuthorizeEnum(Roles.View)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ClothingItemDto>> GetClothingItem(Guid id)
         {
@@ -38,6 +41,7 @@ namespace ClothingApi.Controllers
             return clothingItem;
         }
 
+        [AuthorizeEnum(Roles.Editor)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClothingItem(Guid id, ClothingItemDto clothingItem)
         {
@@ -67,6 +71,7 @@ namespace ClothingApi.Controllers
             return NoContent();
         }
 
+        [AuthorizeEnum(Roles.Editor)]
         [HttpPost]
         public async Task PostClothingItem(List<ClothingItemDto> clothingItems)
         {
@@ -83,6 +88,7 @@ namespace ClothingApi.Controllers
             await _context.SaveChangesAsync();
         }
 
+        [AuthorizeEnum(Roles.Manager)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClothingItem(Guid id)
         {
