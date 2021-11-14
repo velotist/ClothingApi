@@ -1,5 +1,4 @@
 using ClothingApi.Models;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,7 +41,12 @@ namespace ClothingApi
                     options.TokenValidationParameters.NameClaimType = "mgreiner";
                 });
 
-            services.AddAuthorization(options => options.AddPolicy(Policies.))
+            services.AddAuthorization()
+                .AddKeycloakAuthorization(options =>
+                {
+                    options.Audience = jwtOptions.Audience;
+                    options.TokenEndpoint = $"{jwtOptions.Authority}/protocol/openid-connect/token";
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
