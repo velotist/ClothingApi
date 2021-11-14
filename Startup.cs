@@ -1,4 +1,6 @@
 using ClothingApi.Models;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +21,28 @@ namespace ClothingApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            JwtBearerOptions jwtOptions = Configuration.GetSection("JwtBearer").Get<JwtBearerOptions>();
 
             services.AddControllers();
             services.AddDbContext<ClothingContext>(opt =>
                                                opt.UseInMemoryDatabase("ClothingList"));
+
+            services.AddCors(options => options.AddDefaultPolicy(builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+             }));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = jwtOptions.Authority;
+                    options.Audience = jwtOptions.Audience;
+                    options.TokenValidationParameters.NameClaimType = "mgreiner";
+                });
+
+            services.AddAuthorization(options => options.AddPolicy(Policies.))
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
